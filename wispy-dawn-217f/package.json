@@ -1,0 +1,16 @@
+{
+  "name": "wispy-dawn-217f",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "start": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "dependencies": {
+    "aws4": "^1.12.0",
+    "package.json": "^2.0.1"
+  }
+}
