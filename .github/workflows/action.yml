@@ -27,6 +27,7 @@ jobs:
 
     Run-Hello-World:
         runs-on: ${{ needs.get-logical-id.outputs.instance_id }}
+        needs: Test-github
         steps:
         - name: Print hello World
           id: print-hello-world
@@ -35,6 +36,7 @@ jobs:
     
     Terminate-Instance:
         runs-on: "ubuntu-latest"
+        needs: Run-Hello-World
         steps:
         - name: terminate Instance
           id: terminate-instance
