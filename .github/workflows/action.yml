@@ -14,7 +14,7 @@ jobs:
         - name: get logical id of the launch template 
           id: get-logical-id
           run: |
-            template_id=aws cloudformation describe-stack-resource --stack-name=test3  --logical-resource-id=GithubActionsLaunchTemplate --region=ap-south-1 --query='StackResourceDetail.PhysicalResourceId'
+            template_id=${aws cloudformation describe-stack-resource --stack-name=test3  --logical-resource-id=GithubActionsLaunchTemplate --region=ap-south-1 --query='StackResourceDetail.PhysicalResourceId'}
             echo ${template_id}
           env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
