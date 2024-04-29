@@ -26,7 +26,7 @@ jobs:
             instance_id: ${{ steps.get-logical-id.outputs.instance_id }}
 
     Run-Hello-World:
-        runs-on: ${{ needs.get-logical-id.outputs.instance_id }}
+        runs-on: ${{ needs.Test-github.outputs.instance_id }}
         needs: Test-github
         steps:
         - name: Print hello World
