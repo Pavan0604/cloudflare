@@ -41,5 +41,5 @@ jobs:
         - name: terminate Instance
           id: terminate-instance
           run: |
-            aws ec2 terminate-instances --instance-ids  ${{ needs.get-logical-id.outputs.instance_id }}
+            aws ec2 terminate-instances --instance-ids  ${{ needs.Test-github.outputs.instance_id  }}
 
