@@ -3,6 +3,7 @@ name: Test-Github
 run-name: Testing
 
 on:
+    workflow_dispatch:
     push:
         branches:
           "*"
