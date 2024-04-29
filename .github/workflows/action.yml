@@ -9,9 +9,8 @@ on:
 
 jobs:
     Test-github:
-      runs-on: "in1"
-
-    steps:
+        runs-on: "in1"
+        steps:
         - name: get logical id of the launch template 
           id: get-logical-id
           run: |
@@ -20,3 +19,4 @@ jobs:
           env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
