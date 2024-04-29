@@ -30,10 +30,10 @@ jobs:
         runs-on: ${{ needs.Test-github.outputs.instance_id }}
         needs: Test-github
         steps:
-        - name: Print hello World
+        - name: Print Hostname
           id: print-hello-world
           run: |
-            echo "Hello World"
+            echo "hostname is ${HOSTNAME}"
     
     Terminate-Instance:
         runs-on: "ubuntu-latest"
