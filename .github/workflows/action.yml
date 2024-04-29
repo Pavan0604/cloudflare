@@ -18,7 +18,26 @@ jobs:
             run_instance_output=$(aws ec2 run-instances --launch-template LaunchTemplateId=${template_id},Version='$Latest' --region=ap-south-1)
             instance_id=$(echo $run_instance_output | jq -r '.Instances[0].InstanceId')
             echo $instance_id
+            echo INSTANCE_ID=$instance_id >> "$GITHUB_OUTPUT"
           env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        outputs:
+            instance_id: ${{ steps.get-logical-id.outputs.instance_id }}
+
+    Run-Hello-World:
+        runs-on: ${{ needs.get-logical-id.outputs.instance_id }}
+        steps:
+        - name: Print hello World
+          id: print-hello-world
+          run: |
+            echo "Hello World"
+    
+    Terminate-Instance:
+        runs-on: "ubuntu-latest"
+        steps:
+        - name: terminate Instance
+          id: terminate-instance
+          run: |
+            aws ec2 terminate-instances --instance-ids  ${{ needs.get-logical-id.outputs.instance_id }}
 
