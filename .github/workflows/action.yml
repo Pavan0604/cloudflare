@@ -41,7 +41,8 @@ jobs:
         - name: terminate Instance
           id: terminate-instance
           run: |
-            aws ec2 terminate-instances --instance-ids  ${{ needs.Test-github.outputs.instance_id  }}
+            instance_state=$( aws ec2 terminate-instances --instance-ids ${{ needs.Test-github.outputs.instance_id }} )
+            echo $instance_state
           env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
