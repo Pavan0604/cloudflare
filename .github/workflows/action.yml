@@ -43,7 +43,7 @@ jobs:
         - name: Clean up runner
           id: clean-up-runner
           run: |
-            ACTIONS_RUNNER_HOOK_JOB_COMPLETED="cd /home/ec2-user/actions-runner && ./svc.sh stop; cd /home/ec2-user/actions-runner && ./svc.sh uninstall; cd /home/ec2-user/actions-runner && ./config.sh --remove"
+            ACTIONS_RUNNER_HOOK_JOB_COMPLETED="cd /home/ec2-user/actions-runner && ./svc.sh stop; cd /home/ec2-user/actions-runner && ./svc.sh uninstall; cd /home/ec2-user/actions-runner && ./config.sh --remove --pat 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"
 
     Terminate-Instance:
         runs-on: "ubuntu-latest"
