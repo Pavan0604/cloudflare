@@ -33,7 +33,8 @@ jobs:
         - name: Print Hostname
           id: print-hello-world
           run: |
-            echo "hostname is ${HOST}"
+            echo "hostname is ${HOSTNAME}"
+            exit 1
     
     Terminate-Instance:
         runs-on: "ubuntu-latest"
