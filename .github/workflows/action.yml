@@ -48,7 +48,7 @@ jobs:
     Terminate-Instance:
         runs-on: "ubuntu-latest"
         if: ${{ always() }}
-        needs: [Run-Hello-World, Test-github]
+        needs: [Run-Hello-World, Test-github, Clean-Up-Runner]
         steps:
         - name: terminate Instance
           id: terminate-instance
