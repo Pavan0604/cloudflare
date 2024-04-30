@@ -34,7 +34,6 @@ jobs:
           id: print-hello-world
           run: |
             echo "hostname is ${HOSTNAME}"
-            exit 1
 
     Clean-Up-Runner:
         runs-on: ${{ needs.Test-github.outputs.instance_id }}
