@@ -38,10 +38,10 @@ jobs:
     
     Terminate-Instance:
         runs-on: "ubuntu-latest"
+        if: ${{ always() }}
         needs: [Run-Hello-World, Test-github]
         steps:
         - name: terminate Instance
-          if: always()
           id: terminate-instance
           run: |
             aws ec2 terminate-instances --instance-ids ${{ needs.Test-github.outputs.instance_id }} --region ap-south-1
