@@ -38,7 +38,7 @@ jobs:
 
     Clean-Up-Runner:
         runs-on: ${{ needs.Test-github.outputs.instance_id }}
-        needs: Test-github
+        needs: [Test-github, Run-Hello-World]
         steps:
         - name: Clean up runner
           id: clean-up-runner
