@@ -33,13 +33,14 @@ jobs:
         - name: Print Hostname
           id: print-hello-world
           run: |
-            echo "hostname is ${HOSTNAME}"
+            echo "hostname is ${HOST}"
     
     Terminate-Instance:
         runs-on: "ubuntu-latest"
         needs: [Run-Hello-World, Test-github]
         steps:
         - name: terminate Instance
+          if: always()
           id: terminate-instance
           run: |
             aws ec2 terminate-instances --instance-ids ${{ needs.Test-github.outputs.instance_id }} --region ap-south-1
