@@ -96,8 +96,6 @@ jobs:
                 "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners/$id"
                 echo "Deleted runner with ID: $id"
             done
-          env:
-            ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
     
     
 
