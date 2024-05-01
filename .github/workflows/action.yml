@@ -73,21 +73,26 @@ jobs:
                 -H "Authorization: token $ACCESS_TOKEN" \
                 "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners")
             echo $runners
+
+            for id in $(echo $runners | jq -r '.runners[] | select(.status == "offline") | .id'); do
+                curl -s -X DELETE \
+                -H "Authorization: token $ACCESS_TOKEN" \
+                "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners/$id"
+                echo "Deleted runner with ID: $id"
+            done
             echo RUNNERS=$runners >> "$GITHUB_OUTPUT"
-        outputs:
-          runners: ${{ steps.list_runners.outputs.RUNNERS }}
         
-    Delete-Runners:
-        runs-on: "ubuntu-latest"
-        if: ${{ always() }}
-        needs: Remove-Runners
-        steps:
-        - name: Delete Offline Runners
-          id: delete_runners
-          run: |
-            ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
-            RUNNER=${{ needs.Remove-Runners.outputs.runners }}
-            echo $RUNNER
+    # Delete-Runners:
+    #     runs-on: "ubuntu-latest"
+    #     if: ${{ always() }}
+    #     needs: Remove-Runners
+    #     steps:
+    #     - name: Delete Offline Runners
+    #       id: delete_runners
+    #       run: |
+    #         ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    #         RUNNER=${{ needs.Remove-Runners.outputs.runners }}
+    #         echo $RUNNER
             
     
     
