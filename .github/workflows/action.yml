@@ -86,8 +86,8 @@ jobs:
           id: delete_runners
           run: |
             ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
-            runners=${{ needs.Remove-Runners.outputs.runners }}
-            echo $runners
+            RUNNER=${{ needs.Remove-Runners.outputs.runners }}
+            echo $RUNNER
             
     
     
