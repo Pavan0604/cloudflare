@@ -35,30 +35,48 @@ jobs:
           run: |
             echo "hostname is ${HOSTNAME}"
 
-    Clean-Up-Runner:
-        runs-on: ${{ needs.Test-github.outputs.instance_id }}
-        needs: [Test-github, Run-Hello-World]
-        steps:
-        - name: Clean up runner
-          id: clean-up-runner
-          run: |
-            echo 'export RUNNER_ALLOW_RUNASROOT=1' >> /home/ec2-user/.bashrc
-            echo 'export ACTIONS_RUNNER_HOOK_JOB_COMPLETED="cd /home/ec2-user/actions-runner && ./svc.sh stop; cd /home/ec2-user/actions-runner && ./svc.sh uninstall; cd /home/ec2-user/actions-runner && ./config.sh --remove --pat ${{ secrets.PERSONAL_ACCESS_TOKEN }}"' >> /home/ec2-user/.bashrc
-            cat /home/ec2-user/.bashrc
-            source /home/ec2-user/.bashrc
-
-    # Terminate-Instance:
-    #     runs-on: "ubuntu-latest"
-    #     if: ${{ always() }}
-    #     needs: [Run-Hello-World, Test-github, Clean-Up-Runner]
+    # Clean-Up-Runner:
+    #     runs-on: ${{ needs.Test-github.outputs.instance_id }}
+    #     needs: [Test-github, Run-Hello-World]
     #     steps:
-    #     - name: terminate Instance
-    #       id: terminate-instance
+    #     - name: Clean up runner
+    #       id: clean-up-runner
     #       run: |
-    #         aws ec2 terminate-instances --instance-ids ${{ needs.Test-github.outputs.instance_id }} --region ap-south-1
-    #       env:
-    #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #         echo 'export RUNNER_ALLOW_RUNASROOT=1' >> /home/ec2-user/.bashrc
+    #         echo 'export ACTIONS_RUNNER_HOOK_JOB_COMPLETED="cd /home/ec2-user/actions-runner && ./svc.sh stop; cd /home/ec2-user/actions-runner && ./svc.sh uninstall; cd /home/ec2-user/actions-runner && ./config.sh --remove --pat ${{ secrets.PERSONAL_ACCESS_TOKEN }}"' >> /home/ec2-user/.bashrc
+    #         cat /home/ec2-user/.bashrc
+    #         source /home/ec2-user/.bashrc
+
+    Terminate-Instance:
+        runs-on: "ubuntu-latest"
+        if: ${{ always() }}
+        needs: [Run-Hello-World, Test-github]
+        steps:
+        - name: terminate Instance
+          id: terminate-instance
+          run: |
+            aws ec2 terminate-instances --instance-ids ${{ needs.Test-github.outputs.instance_id }} --region ap-south-1
+          env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    
+    Remove-Runners:
+        runs-on: "ubuntu-latest"
+        if: ${{ always() }}
+        needs: [Run-Hello-World, Test-github, Terminate-Instance]
+        steps:
+        - name: List Runners
+          id: list_runners
+          run: |
+            ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
+            REPO_OWNER=Pavan0604
+            REPO_NAME=cloudflare
+              
+            runners=$(curl -s -X GET \
+                -H "Authorization: token $ACCESS_TOKEN" \
+                "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners")
+            echo $runners
+            echo "::set-output name=runners::$runners"
     
     
 
