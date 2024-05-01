@@ -89,11 +89,7 @@ jobs:
             ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
               
             runners=${{ needs.Remove-Runners.outputs.runners }}
-            echo $runners
-            # for id in $(echo $runners | jq -r '.runners[] | select(.status == "offline") | .id'); do
-            #     curl -s -X DELETE -H "Authorization: token $ACCESS_TOKEN" "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners/$id"
-            #     echo "Deleted runner with ID: $id"
-            # done
+            
     
     
 
