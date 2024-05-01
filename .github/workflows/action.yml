@@ -68,8 +68,6 @@ jobs:
           id: list_runners
           run: |
             ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
-            REPO_OWNER=Pavan0604
-            REPO_NAME=cloudflare
               
             runners=$(curl -s -X GET \
                 -H "Authorization: token $ACCESS_TOKEN" \
@@ -85,10 +83,11 @@ jobs:
         needs: Remove-Runners
         steps:
         - name: Delete Offline Runners
+          id: delete_runners
           run: |
             ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
-              
             runners=${{ needs.Remove-Runners.outputs.runners }}
+            echo $runners
             
     
     
