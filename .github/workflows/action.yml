@@ -51,7 +51,7 @@ jobs:
     
     Remove-Runners:
         runs-on: "ubuntu-latest"
-        if: ${{ always() && (needs.Test-github.outputs.instance_id != '') }}
+        if: ${{ always()}}
         needs: [Run-Hello-World, Test-github, Terminate-Instance]
         steps:
         - name: List Runners
