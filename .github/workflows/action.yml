@@ -61,27 +61,27 @@ jobs:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     
-    # Remove-Runners:
-    #     runs-on: "ubuntu-latest"
-    #     if: ${{ always() }}
-    #     needs: [Run-Hello-World, Test-github, Terminate-Instance]
-    #     steps:
-    #     - name: List Runners
-    #       id: list_runners
-    #       run: |
-    #         ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    Remove-Runners:
+        runs-on: "ubuntu-latest"
+        if: ${{ always() }}
+        needs: [Run-Hello-World, Test-github, Terminate-Instance]
+        steps:
+        - name: List Runners
+          id: list_runners
+          run: |
+            ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
               
-    #         runners=$(curl -s -X GET \
-    #             -H "Authorization: token $ACCESS_TOKEN" \
-    #             "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners")
-    #         echo $runners
+            runners=$(curl -s -X GET \
+                -H "Authorization: token $ACCESS_TOKEN" \
+                "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners")
+            echo $runners
 
-    #         for id in $(echo $runners | jq -r '.runners[] | select(.status == "offline" && .name == "${{ needs.Test-github.outputs.instance_id }}" ) | .id'); do
-    #             curl -s -X DELETE \
-    #             -H "Authorization: token $ACCESS_TOKEN" \
-    #             "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners/$id"
-    #             echo "Deleted runner with ID: $id"
-    #         done
+            for id in $(echo $runners | jq -r '.runners[] | select(.status == "offline" && .name == "${{ needs.Test-github.outputs.instance_id }}" ) | .id'); do
+                curl -s -X DELETE \
+                -H "Authorization: token $ACCESS_TOKEN" \
+                "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners/$id"
+                echo "Deleted runner with ID: $id"
+            done
             
 
     
