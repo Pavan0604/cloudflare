@@ -15,7 +15,6 @@ jobs:
         - name: get logical id of the launch template 
           id: get-logical-id
           run: |
-            exit 1
             template_id=$(aws cloudformation describe-stack-resource --stack-name=test3  --logical-resource-id=GithubActionsLaunchTemplate --region=ap-south-1 --query='StackResourceDetail.PhysicalResourceId')
             run_instance_output=$(aws ec2 run-instances --launch-template LaunchTemplateId=${template_id},Version='$Latest' --region=ap-south-1)
             instance_id=$(echo $run_instance_output | jq -r '.Instances[0].InstanceId')
@@ -35,6 +34,7 @@ jobs:
           id: print-hello-world
           run: |
             echo "hostname is ${HOSTNAME}"
+            exit 1
 
     Terminate-Instance:
         runs-on: "ubuntu-latest"
