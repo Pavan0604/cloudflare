@@ -76,7 +76,7 @@ jobs:
                 "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners")
             echo $runners
 
-            for id in $(echo $runners | jq -r '.runners[] | select(.status == "offline" && .name == "${{ needs.Test-github.outputs.instance_id }}" ) | .id'); do
+            for id in $(echo $runners | jq -r '.runners[] | select(.status == "offline" and .name == "${{ needs.Test-github.outputs.instance_id }}" ) | .id'); do
                 curl -s -X DELETE \
                 -H "Authorization: token $ACCESS_TOKEN" \
                 "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners/$id"
