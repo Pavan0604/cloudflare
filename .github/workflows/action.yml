@@ -51,11 +51,11 @@ jobs:
     
     Remove-Runners:
         runs-on: "ubuntu-latest"
-        if: ${{ always()}}
+        if: ${{ always() && (needs.Test-github.outputs.instance_id != '') }}
         needs: [Run-Hello-World, Test-github, Terminate-Instance]
         steps:
-        - name: List Runners
-          id: list_runners
+        - name: Remove Runners
+          id: remove_runners
           run: |
             ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
               
