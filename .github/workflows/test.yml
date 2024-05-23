@@ -1,0 +1,28 @@
+name: Test-Github
+
+run-name: Testing
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+          "*"
+
+jobs:
+    Test-Silence:
+        runs-on: "ubuntu-latest"
+        steps:
+        - name: Silence for 10 minutes
+          id: silence-for-10-mins
+          run: |
+            ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }}
+            current_time=$(date +%s)
+            next_time=$(date -v+10M +%s)
+            curl --location 'https://app.last9.io/api/v4/organizations/clevertap/entities/f47d2b45-2aa6-4f65-b378-aa24010bd58a/alert-rules/snooze' \
+            --header 'X-LAST9-API-TOKEN: Bearer ${ACCESS_TOKEN}' \
+            --header 'Accept: application/json' \
+            --header 'Content-Type: application/json' \
+            --header 'Cookie: last9Org=clevertap; last9Token=' \
+            --data '{
+            "until": ${next_time}
+            }'

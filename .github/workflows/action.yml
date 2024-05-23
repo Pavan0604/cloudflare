@@ -1,74 +1,74 @@
-name: Test-Github
+# name: Test-Github
 
-run-name: Testing
+# run-name: Testing
 
-on:
-    workflow_dispatch:
-    push:
-        branches:
-          "*"
+# on:
+#     workflow_dispatch:
+#     push:
+#         branches:
+#           "*"
 
-jobs:
-    Test-github:
-        runs-on: "ubuntu-latest"
-        steps:
-        - name: get logical id of the launch template 
-          id: get-logical-id
-          run: |
-            template_id=$(aws cloudformation describe-stack-resource --stack-name=test3  --logical-resource-id=GithubActionsLaunchTemplate --region=ap-south-1 --query='StackResourceDetail.PhysicalResourceId')
-            run_instance_output=$(aws ec2 run-instances --launch-template LaunchTemplateId=${template_id},Version='$Latest' --region=ap-south-1)
-            instance_id=$(echo $run_instance_output | jq -r '.Instances[0].InstanceId')
-            echo $instance_id
-            echo INSTANCE_ID=$instance_id >> "$GITHUB_OUTPUT"
-          env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        outputs:
-            instance_id: ${{ steps.get-logical-id.outputs.INSTANCE_ID }}
+# jobs:
+#     Test-github:
+#         runs-on: "ubuntu-latest"
+#         steps:
+#         - name: get logical id of the launch template 
+#           id: get-logical-id
+#           run: |
+#             template_id=$(aws cloudformation describe-stack-resource --stack-name=test3  --logical-resource-id=GithubActionsLaunchTemplate --region=ap-south-1 --query='StackResourceDetail.PhysicalResourceId')
+#             run_instance_output=$(aws ec2 run-instances --launch-template LaunchTemplateId=${template_id},Version='$Latest' --region=ap-south-1)
+#             instance_id=$(echo $run_instance_output | jq -r '.Instances[0].InstanceId')
+#             echo $instance_id
+#             echo INSTANCE_ID=$instance_id >> "$GITHUB_OUTPUT"
+#           env:
+#             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         outputs:
+#             instance_id: ${{ steps.get-logical-id.outputs.INSTANCE_ID }}
 
-    Run-Hello-World:
-        runs-on: ${{ needs.Test-github.outputs.instance_id }}
-        needs: Test-github
-        steps:
-        - name: Print Hostname
-          id: print-hello-world
-          run: |
-            echo "hostname is ${HOSTNAME}"
-            exit 1
+#     Run-Hello-World:
+#         runs-on: ${{ needs.Test-github.outputs.instance_id }}
+#         needs: Test-github
+#         steps:
+#         - name: Print Hostname
+#           id: print-hello-world
+#           run: |
+#             echo "hostname is ${HOSTNAME}"
+#             exit 1
 
-    Terminate-Instance:
-        runs-on: "ubuntu-latest"
-        if: ${{ always() && (needs.Test-github.outputs.instance_id != '') }}
-        needs: [Run-Hello-World, Test-github]
-        steps:
-        - name: terminate Instance
-          id: terminate-instance
-          run: |
-            aws ec2 terminate-instances --instance-ids ${{ needs.Test-github.outputs.instance_id }} --region ap-south-1
-          env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#     Terminate-Instance:
+#         runs-on: "ubuntu-latest"
+#         if: ${{ always() && (needs.Test-github.outputs.instance_id != '') }}
+#         needs: [Run-Hello-World, Test-github]
+#         steps:
+#         - name: terminate Instance
+#           id: terminate-instance
+#           run: |
+#             aws ec2 terminate-instances --instance-ids ${{ needs.Test-github.outputs.instance_id }} --region ap-south-1
+#           env:
+#             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     
-    Remove-Runners:
-        runs-on: "ubuntu-latest"
-        if: ${{ always() && (needs.Test-github.outputs.instance_id != '') }}
-        needs: [Run-Hello-World, Test-github, Terminate-Instance]
-        steps:
-        - name: Remove Runners
-          id: remove_runners
-          run: |
-            ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
+#     Remove-Runners:
+#         runs-on: "ubuntu-latest"
+#         if: ${{ always() && (needs.Test-github.outputs.instance_id != '') }}
+#         needs: [Run-Hello-World, Test-github, Terminate-Instance]
+#         steps:
+#         - name: Remove Runners
+#           id: remove_runners
+#           run: |
+#             ACCESS_TOKEN=${{ secrets.PERSONAL_ACCESS_TOKEN }}
               
-            runners=$(curl -s -X GET \
-                -H "Authorization: token $ACCESS_TOKEN" \
-                "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners")
+#             runners=$(curl -s -X GET \
+#                 -H "Authorization: token $ACCESS_TOKEN" \
+#                 "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners")
 
-            for id in $(echo $runners | jq -r '.runners[] | select(.status == "offline" and .name == "${{ needs.Test-github.outputs.instance_id }}" ) | .id'); do
-                curl -s -X DELETE \
-                -H "Authorization: token $ACCESS_TOKEN" \
-                "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners/$id"
-                echo "Deleted runner with ID: $id"
-            done
+#             for id in $(echo $runners | jq -r '.runners[] | select(.status == "offline" and .name == "${{ needs.Test-github.outputs.instance_id }}" ) | .id'); do
+#                 curl -s -X DELETE \
+#                 -H "Authorization: token $ACCESS_TOKEN" \
+#                 "https://api.github.com/repos/Pavan0604/cloudflare/actions/runners/$id"
+#                 echo "Deleted runner with ID: $id"
+#             done
             
 
     
