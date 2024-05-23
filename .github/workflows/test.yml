@@ -18,6 +18,8 @@ jobs:
             ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }}
             current_time=$(date +%s)
             next_time=$(date -d "30 minutes" +%s)
+            echo "Current Time is - ${current_time}"
+            echo "Next Time is - ${next_time}"
             curl --location 'https://app.last9.io/api/v4/organizations/clevertap/entities/f47d2b45-2aa6-4f65-b378-aa24010bd58a/alert-rules/snooze' \
             --header 'X-LAST9-API-TOKEN: Bearer ${ACCESS_TOKEN}' \
             --header 'Accept: application/json' \
