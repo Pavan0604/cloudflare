@@ -27,5 +27,5 @@ jobs:
             --header "Content-Type: application/json" \
             --header "Cookie: last9Org=clevertap; last9Token=" \
             --data "{
-                until: 1716466355
+                "until": $next_time
             }"
