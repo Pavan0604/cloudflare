@@ -3,14 +3,13 @@ name: Test-Github
 run-name: Testing
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       StackPrefix:
         type: string
         description: Stack Prefix of region
         required: true
 
-  workflow_dispatch:
   push:
       branches:
         "*"
