@@ -25,11 +25,12 @@ jobs:
             ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }}
 
             stack_prefix=${{ inputs.StackPrefix }}
+
             set -euxo pipefail
             entity_id="f47d2b45-2aa6-4f65-b378-aa24010bd58a"
-            if [[ "stack_prefix" == "in1" ]]; then
+            if [[ "$stack_prefix" == "in1" ]]; then
               entity_id="f47d2b45-2aa6-4f65-b378-aa24010bd58a"
-            elif [[ "stack_prefix" == "eu1" ]]; then
+            elif [[ "$stack_prefix" == "eu1" ]]; then
               entity_id="14d4e8f1-293c-417c-8564-8d23901d4c01"
             else
               exit 0
