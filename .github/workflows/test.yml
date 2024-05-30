@@ -23,5 +23,7 @@ jobs:
           id: silence-for-10-mins
           run: |
             set -euxo pipefail
+            pwd
+            ls
             python3 ./scripts/silence_last9_lp_alerts.py --region ${{ inputs.StackPrefix }} --access_token ${{ secrets.ACCESS_TOKEN }}
 
