@@ -19,6 +19,9 @@ jobs:
     Test-Silence:
         runs-on: "ubuntu-latest"
         steps:
+        - name: Checkout Cloudflare repo
+          uses: actions/checkout@v3
+        
         - name: Silence for 10 minutes
           id: silence-for-10-mins
           run: |
