@@ -22,27 +22,6 @@ jobs:
         - name: Silence for 10 minutes
           id: silence-for-10-mins
           run: |
-            ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }}
-
-            stack_prefix=${{ inputs.StackPrefix }}
-
             set -euxo pipefail
-            entity_id="f47d2b45-2aa6-4f65-b378-aa24010bd58a"
-            if [[ "$stack_prefix" == "in1" ]]; then
-              entity_id="f47d2b45-2aa6-4f65-b378-aa24010bd58a"
-            elif [[ "$stack_prefix" == "eu1" ]]; then
-              entity_id="14d4e8f1-293c-417c-8564-8d23901d4c01"
-            else
-              exit 0
-            fi
-            current_time=$(date +%s)
-            next_time=$(date -d "30 minutes" +%s)
-            echo "Current Time is - ${current_time}"
-            echo "Next Time is - ${next_time}"
+            python3 ./scripts/scripts/silence_last9_lp_alerts.py --region ${{ inputs.StackPrefix }} --access_token ${{ secrets.ACCESS_TOKEN }}
 
-            curl --location "https://app.last9.io/api/v4/organizations/clevertap/entities/$entity_id/alert-rules/snooze" \
-            --header "X-LAST9-API-TOKEN: Bearer $ACCESS_TOKEN" \
-            --header 'Accept: application/json' \
-            --header "Content-Type: application/json" \
-            --header "Cookie: last9Org=clevertap; last9Token=" \
-            --data '{"until": '"$next_time"'}'
