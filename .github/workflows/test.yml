@@ -30,3 +30,14 @@ jobs:
             ls
             python3 ./scripts/silence_last9_lp_alerts.py --region ${{ inputs.StackPrefix }} --access_token ${{ secrets.ACCESS_TOKEN }}
 
+        - name: Echo test
+          run: |
+            echo "I am running"
+      
+    New-Job:
+      runs-on: "ubuntu-latest"
+      steps:
+        - name: Echo test
+          run: |
+            echo "I am a New job"
+    
