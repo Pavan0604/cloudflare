@@ -24,6 +24,7 @@ jobs:
         
         - name: Silence for 10 minutes
           id: silence-for-10-mins
+          continue-on-error: true
           run: |
             set -euxo pipefail
             pwd
