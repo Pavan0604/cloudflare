@@ -1,9 +1,11 @@
 name: Maven Build and Deploy to S3
 
 on:
-  push:
-    branches:
-      - "*"
+    workflow_dispatch:
+    push:
+        branches:
+            - "*"
+
 
 jobs:
   build:
