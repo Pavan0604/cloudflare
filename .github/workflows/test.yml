@@ -1,44 +1,44 @@
-name: Test-Github
+# name: Test-Github
 
-run-name: Testing
+# run-name: Testing
 
-on:
-  workflow_dispatch:
-    inputs:
-      StackPrefix:
-        type: string
-        description: Stack Prefix of region
-        required: true
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       StackPrefix:
+#         type: string
+#         description: Stack Prefix of region
+#         required: true
 
-  push:
-      branches:
-        "*"
+#   push:
+#       branches:
+#         "*"
     
-jobs:
-    Test-Silence:
-        runs-on: "ubuntu-latest"
-        steps:
-        - name: Checkout Cloudflare repo
-          uses: actions/checkout@v3
+# jobs:
+#     Test-Silence:
+#         runs-on: "ubuntu-latest"
+#         steps:
+#         - name: Checkout Cloudflare repo
+#           uses: actions/checkout@v3
         
-        - name: Silence for 10 minutes
-          id: silence-for-10-mins
-          continue-on-error: true
-          run: |
-            set -euxo pipefail
-            pwd
-            ls
-            python3 ./scripts/silence_last9_lp_alerts.py --region ${{ inputs.StackPrefix }} --refresh_token ${{ secrets.REFRESH_TOKEN }}
-        - name: Echo test
-          run: |
-            echo "I am running"
+#         - name: Silence for 10 minutes
+#           id: silence-for-10-mins
+#           continue-on-error: true
+#           run: |
+#             set -euxo pipefail
+#             pwd
+#             ls
+#             python3 ./scripts/silence_last9_lp_alerts.py --region ${{ inputs.StackPrefix }} --refresh_token ${{ secrets.REFRESH_TOKEN }}
+#         - name: Echo test
+#           run: |
+#             echo "I am running"
       
-    New-Job:
-      runs-on: "ubuntu-latest"
-      needs: Test-Silence
-      steps:
-        - name: Echo test
-          run: |
-            echo "I am a New job ${{ github.run_number }}"
+#     New-Job:
+#       runs-on: "ubuntu-latest"
+#       needs: Test-Silence
+#       steps:
+#         - name: Echo test
+#           run: |
+#             echo "I am a New job ${{ github.run_number }}"
 
     
