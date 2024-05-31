@@ -26,12 +26,9 @@ def create_access_token(refresh_token):
 
         response = requests.request("POST", url, headers=headers, data=payload)
         response.raise_for_status()
-        if response.status_code == 200:
-            res = json.loads(response.text)
-            access_token = res["access_token"]
-        else:
-            logging.error("Unable to retrieve access token, returned status code: " + str(response.status_code))
-            sys.exit(0) 
+        
+        res = response.json()
+        access_token = res["access_token"]
         return access_token
     
     except requests.exceptions.RequestException as e:

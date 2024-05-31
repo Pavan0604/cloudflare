@@ -39,5 +39,6 @@ jobs:
       steps:
         - name: Echo test
           run: |
-            echo "I am a New job"
+            echo "I am a New job ${{ github.run_number }}"
+
     
