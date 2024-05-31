@@ -24,7 +24,7 @@ jobs:
       
       - name: Copy Release JAR to S3
         run: |
-          aws s3 cp target/keycloak-account-ext.jar s3://testbucketforcloudflare/rhkeycloak-packages/keycloak-account-ext-${{ github.event.release.name }}}.jar
+          aws s3 cp target/keycloak-account-ext.jar s3://testbucketforcloudflare/rhkeycloak-packages/keycloak-account-ext-${{ github.event.release.name }}.jar
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
