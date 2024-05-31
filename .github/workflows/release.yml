@@ -16,7 +16,7 @@ jobs:
         with:
           repository: Pavan0606/cloudflare
           tag: ${{ github.event.release.name }}
-          fileName: account-fix-demo.zip
+          fileName: "account-fix-demo.zip"
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       
       - name: Unzip Asset
