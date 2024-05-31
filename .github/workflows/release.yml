@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    concurrency: release
+    runs-on: 'ubuntu-latest'
+    if: github.run_attempt == 1
+
+    steps:      
+      - name: Download Asset
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: CleverTap-CPE/Keycloak-Account-Extension
+          tag: ${{ github.event.release.name }}
+          fileName: account-fix-demo.zip
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      
+      - name: Unzip Asset
+        run: unzip account-fix-demo.zip && rm -rf account-fix-demo.zip
+      
+      - name: Copy Release JAR to S3
+        run: |
+          aws s3 cp target/keycloak-account-ext.jar s3://testbucketforcloudflare/rhkeycloak-packages/keycloak-account-ext-${{ github.event.release.name }}}.jar
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "ap-south-1"
