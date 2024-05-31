@@ -56,7 +56,7 @@ jobs:
           draft-drop: true
           draft-drop-count: 0
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish Release
         run: echo "You can publish release from here - ${{ steps.create_release.outputs.html_url }}"
