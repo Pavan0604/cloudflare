@@ -14,7 +14,7 @@ jobs:
       - name: Download Asset
         uses: robinraju/release-downloader@v1.8
         with:
-          repository: Pavan0606/cloudflare
+          repository: Pavan0604/cloudflare
           tag: ${{ github.event.release.name }}
           fileName: "account-fix-demo.zip"
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
