@@ -14,7 +14,7 @@ env:
 
 jobs:
   execute-export-splunk-search-results-to-gcp-bucket:
-    runs-on: System
+    runs-on: ubuntu-latest
     steps:
 
       - name: Checkout Infra-Actions repo

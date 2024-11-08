@@ -4,6 +4,7 @@ from google.cloud import storage
 from google.oauth2 import service_account
 from datetime import datetime
 import argparse
+import csv
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--splunk-access-token",help="Splunk Access Token")
@@ -35,15 +36,15 @@ search index=eve* "Done stats Consolidation for" earliest=-{TIME_INTERVAL}h late
 
 service_account_info = {
   "type": "service_account",
-  "project_id": "clevertap-product-intelligence",
+  "project_id": "utopian-pier-441005-a2",
   "private_key_id": GCP_PRIVATE_KEY_ID,
   "private_key": GCP_PRIVATE_KEY,
-  "client_email": "clevertap-splunk-access-iam-se@clevertap-product-intelligence.iam.gserviceaccount.com",
-  "client_id": "115999811522001166533",
+  "client_email": "splunk-upload@utopian-pier-441005-a2.iam.gserviceaccount.com",
+  "client_id": "115329117284467900669",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
   "token_uri": "https://oauth2.googleapis.com/token",
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/clevertap-splunk-access-iam-se%40clevertap-product-intelligence.iam.gserviceaccount.com",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/splunk-upload%40utopian-pier-441005-a2.iam.gserviceaccount.com",
   "universe_domain": "googleapis.com"
 }
 
@@ -119,19 +120,39 @@ def retrieve_results(job_id):
         raise
 
 
-def upload_to_gcs(data, bucket_name, filename):
+def upload_to_gcs( bucket_name, filename):
     """Uploads the CSV results to a Google Cloud Storage bucket."""
     try:
+        # # Authenticate into GCP using service account credentials
+        # credentials = service_account.Credentials.from_service_account_info(service_account_info)
+        # storage_client = storage.Client(credentials=credentials, project=service_account_info["project_id"])
+
+        # bucket = storage_client.bucket(bucket_name)
+        # blob = bucket.blob(filename)
+
+        # # Upload CSV data
+        # blob.upload_from_string(data, content_type="text/csv")
+        # print(f"Results uploaded to GCP bucket '{bucket_name}' as '{filename}' in CSV format.")
+
+        content = """This is a sample text file.
+                    It contains some content to upload to GCP.
+                    You can add more lines here as needed."""
+
         # Authenticate into GCP using service account credentials
         credentials = service_account.Credentials.from_service_account_info(service_account_info)
         storage_client = storage.Client(credentials=credentials, project=service_account_info["project_id"])
 
+        # Create a temporary text file and write content to it
+        temp_filename = "temp_file.txt"
+        with open(temp_filename, mode='w') as file:
+            file.write(content)
+
+        # Upload the text file to GCP bucket
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(filename)
+        blob.upload_from_filename(temp_filename)
+        print(f"Text file uploaded to GCP bucket '{bucket_name}' as '{filename}'.")
 
-        # Upload CSV data
-        blob.upload_from_string(data, content_type="text/csv")
-        print(f"Results uploaded to GCP bucket '{bucket_name}' as '{filename}' in CSV format.")
     except Exception as e:
         print(f"Error uploading results to GCP bucket: {e}")
         raise
@@ -140,16 +161,16 @@ def upload_to_gcs(data, bucket_name, filename):
 def main():
     try:
         # Step 1: Trigger the search job
-        job_id = trigger_search()
+        # job_id = trigger_search()
 
-        # Step 2: Poll the job status until it's done
-        check_job_status(job_id)
+        # # Step 2: Poll the job status until it's done
+        # check_job_status(job_id)
 
-        # Step 3: Retrieve search results in CSV format
-        results_csv = retrieve_results(job_id)
+        # # Step 3: Retrieve search results in CSV format
+        # results_csv = retrieve_results(job_id)
 
         # Step 4: Upload the results to the GCP bucket with a dynamic filename
-        upload_to_gcs(results_csv, GCP_BUCKET_NAME, GCP_FILE_NAME)
+        upload_to_gcs(GCP_BUCKET_NAME, GCP_FILE_NAME)
 
     except Exception as e:
         print(f"An error occurred during the process: {e}")
