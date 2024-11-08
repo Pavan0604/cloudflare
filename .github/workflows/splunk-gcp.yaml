@@ -31,5 +31,4 @@ jobs:
         run: |
           source venv/bin/activate
           set -euxo pipefail
-          echo ${{ secrets.GCP_CLEVERTAP_PRODUCT_INTELLIGENCE_PRIVATE_KEY }}
-          python3  ./scripts/export_search_results_to_gcp_bucket.py --splunk-access-token=${{ secrets.SPLUNK_ACCESS_TOKEN }} --time-interval=24 --gcp-private-key-id=${{ secrets.GCP_CLEVERTAP_PRODUCT_INTELLIGENCE_PRIVATE_KEY_ID }} --gcp-private-key=${{ secrets.GCP_CLEVERTAP_PRODUCT_INTELLIGENCE_PRIVATE_KEY }}
+          python3  ./scripts/export_search_results_to_gcp_bucket.py --splunk-access-token=${{ secrets.SPLUNK_ACCESS_TOKEN }} --time-interval=24 --gcp-private-key-id=${{ secrets.GCP_CLEVERTAP_PRODUCT_INTELLIGENCE_PRIVATE_KEY_ID }} --gcp-private-key='${{ secrets.GCP_CLEVERTAP_PRODUCT_INTELLIGENCE_PRIVATE_KEY }}'

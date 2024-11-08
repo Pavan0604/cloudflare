@@ -4,7 +4,7 @@ from google.cloud import storage
 from google.oauth2 import service_account
 from datetime import datetime
 import argparse
-import csv
+import tempfile
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--splunk-access-token",help="Splunk Access Token")
@@ -143,9 +143,9 @@ def upload_to_gcs( bucket_name, filename):
         storage_client = storage.Client(credentials=credentials, project=service_account_info["project_id"])
 
         # Create a temporary text file and write content to it
-        temp_filename = "temp_file.txt"
-        with open(temp_filename, mode='w') as file:
-            file.write(content)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".txt") as temp_file:
+            temp_filename = temp_file.name
+            temp_file.write(content.encode('utf-8'))
 
         # Upload the text file to GCP bucket
         bucket = storage_client.bucket(bucket_name)
