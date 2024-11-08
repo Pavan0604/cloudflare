@@ -19,7 +19,7 @@ GCP_PRIVATE_KEY_ID = args.gcp_private_key_id
 GCP_PRIVATE_KEY = args.gcp_private_key
 
 SPLUNK_HOST = "https://clevertap.splunkcloud.com:8089"
-GCP_BUCKET_NAME = "splunk_upload"
+GCP_BUCKET_NAME = "splunktogcp"
 GCP_FILE_NAME = f"splunk_segment_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
 
 # Define Splunk Search Query
