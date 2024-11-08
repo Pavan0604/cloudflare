@@ -1,0 +1,35 @@
+name: splunk/Export-Search-Results-To-GCP-Bucket
+
+on:
+  # schedule:
+  #   - cron: '*/5 * * * *'  
+  pull_request:
+    branches:
+      - 'master'
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
+jobs:
+  execute-export-splunk-search-results-to-gcp-bucket:
+    runs-on: System
+    steps:
+
+      - name: Checkout Infra-Actions repo
+        uses: actions/checkout@v3
+
+      - name: Install Python Requirements
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          set -euxo pipefail
+          pip3 install requests google-cloud-storage google-auth
+
+      - name: Run Export Splunk Search Results to GCP Script
+        run: |
+          source venv/bin/activate
+          set -euxo pipefail
+          echo ${{ secrets.GCP_CLEVERTAP_PRODUCT_INTELLIGENCE_PRIVATE_KEY }}
+          python3  ./scripts/splunk/export_search_results_to_gcp_bucket.py --splunk-access-token=${{ secrets.SPLUNK_ACCESS_TOKEN }} --time-interval=24 --gcp-private-key-id=${{ secrets.GCP_CLEVERTAP_PRODUCT_INTELLIGENCE_PRIVATE_KEY_ID }} --gcp-private-key=${{ secrets.GCP_CLEVERTAP_PRODUCT_INTELLIGENCE_PRIVATE_KEY }}
