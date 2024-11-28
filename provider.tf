@@ -6,7 +6,3 @@ terraform {
     }
   }
 }
-
-provider "github" {
-  token = "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"
-}
