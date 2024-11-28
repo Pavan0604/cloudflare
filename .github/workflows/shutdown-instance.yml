@@ -1,11 +1,11 @@
 name: aws/Shutdown-Instance
 
 on: 
-  pull_request:
-    branches:
-      - 'master'
-    types: [opened, synchronize, reopened]
-  workflow_dispatch:
+    pull_request:
+        branches:
+        - 'master'
+        types: [opened, synchronize, reopened]
+    workflow_dispatch:
 
 jobs:
   execute-shutdown-instance-on-aws:

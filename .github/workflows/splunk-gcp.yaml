@@ -7,7 +7,7 @@ on:
   #   branches:
   #     - 'master'
   #   types: [opened, synchronize, reopened]
-  # workflow_dispatch:
+  workflow_dispatch:
 
 env:
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
