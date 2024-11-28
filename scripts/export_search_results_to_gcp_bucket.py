@@ -35,17 +35,6 @@ search index=eve* "Done stats Consolidation for" earliest=-{TIME_INTERVAL}h late
 """
 
 service_account_info = {
-  "type": "service_account",
-  "project_id": "utopian-pier-441005-a2",
-  "private_key_id": GCP_PRIVATE_KEY_ID,
-  "private_key": GCP_PRIVATE_KEY,
-  "client_email": "splunk-upload@utopian-pier-441005-a2.iam.gserviceaccount.com",
-  "client_id": "115329117284467900669",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/splunk-upload%40utopian-pier-441005-a2.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
 }
 
 print(f"service_account_info = {service_account_info}")
