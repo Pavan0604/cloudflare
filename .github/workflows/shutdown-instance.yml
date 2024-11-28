@@ -17,7 +17,7 @@ jobs:
       - name: Get Instances
         run: |
             set -euxo pipefail
-            instances=$(aws ec2 describe-instances --filters "Name=StackName,Values=testing-1" --region ap-northeast-2)
+            instances=$(aws ec2 describe-instances --filters Name=StackName,Values=testing-1 --region ap-northeast-2)
             echo $instances
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
