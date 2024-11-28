@@ -1,0 +1,24 @@
+name: aws/Shutdown-Instance
+
+on: 
+  pull_request:
+    branches:
+      - 'master'
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  execute-shutdown-instance-on-aws:
+    runs-on: sk1
+    steps:
+      - name: Checkout cloudflare repo
+        uses: actions/checkout@v3
+
+      - name: Get Instances
+        run: |
+            set -euxo pipefail
+            instances=$(aws ec2 describe-instances --filters "Name=StackName,Values=testing-1)"]
+            echo $instances
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
