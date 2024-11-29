@@ -20,7 +20,7 @@ jobs:
             INSTANCE_IDS=$(aws ec2 describe-instances \
             --region ap-northeast-2 \
             --filters "Name=tag:StackName,Values=testing-1" \
-            --query 'Reservations[*].Instances[*].InstanceId' \
+            --query "Reservations[*].Instances[*].InstanceId" \
             --output text | tr '\n' ' ' | xargs)
             echo $INSTANCE_IDS
         env:
