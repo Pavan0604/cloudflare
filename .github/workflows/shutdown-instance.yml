@@ -12,7 +12,7 @@ on:
 
 jobs:
   execute-shutdown-instance-on-aws:
-    runs-on: macos-14-large
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v2
       - name: Use node.js version 10.24.1
