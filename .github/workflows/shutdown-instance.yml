@@ -12,14 +12,13 @@ on:
 
 jobs:
   execute-shutdown-instance-on-aws:
-    runs-on: macos-14
+    runs-on: macos-14-large
     steps:
       - uses: actions/checkout@v2
       - name: Use node.js version 10.24.1
         uses: actions/setup-node@v4
         with:
-          node-version: '14'
-          architecture: "arm64"
+          node-version: '10.24.1'
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
