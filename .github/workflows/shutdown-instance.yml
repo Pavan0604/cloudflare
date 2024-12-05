@@ -1,28 +1,33 @@
 name: aws/Shutdown-Instance
 
 on: 
-    pull_request:
-        branches:
-        - 'main'
-        types: [opened, synchronize, reopened]
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+      branches:
+      - 'main'
+      types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 jobs:
   execute-shutdown-instance-on-aws:
-    runs-on: sk1
+    runs-on: macos-14-arm64
     steps:
-      - name: Checkout cloudflare repo
-        uses: actions/checkout@v3
-
-      - name: Get Instances
-        run: |
-            set -euxo pipefail
-            INSTANCE_IDS=$(aws ec2 describe-instances \
-            --region ap-northeast-2 \
-            --filters "Name=tag:StackName,Values=testing-1" \
-            --query "Reservations[*].Instances[*].InstanceId" \
-            --output text | tr '\n' ' ' | xargs)
-            echo $INSTANCE_IDS
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - uses: actions/checkout@v2
+      - name: Use node.js version 10.24.1
+        uses: actions/setup-node@v2.1.2
+        with:
+          node-version: '10.24.1'
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v4
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install packages
+        run: yarn
