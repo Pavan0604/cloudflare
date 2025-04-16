@@ -24,7 +24,7 @@ jobs:
 
       - name: Copy Lambda Function zip file to s3 bucket
         run: |
-          aws s3 cp src/functions/aws/inapp_media_mediaconvert.zip s3://eu1-sharedresources-lambdasources3bucket-lwq5519d3h7y/LambdaSource/functions/dashboard/mediaconvert/inapp_media_mediaconvert.zip
+          aws s3 cp src/functions/aws/inapp_media_mediaconvert.zip s3://inappmedia-lambda-code-s3-bucket/LambdaSource/functions/dashboard/mediaconvert/inapp_media_mediaconvert.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
