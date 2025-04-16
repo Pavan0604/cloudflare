@@ -16,7 +16,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create Lambda Function zip file
-        if: github.ref == 'refs/heads/master'
         run: zip inapp_media_mediaconvert.zip inapp_media_mediaconvert.js
         working-directory: src/functions/aws/
 

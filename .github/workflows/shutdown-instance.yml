@@ -1,13 +1,13 @@
 name: aws/Shutdown-Instance
 
 on: 
-  push:
-    branches:
-      - main
-  pull_request:
-      branches:
-      - 'main'
-      types: [opened, synchronize, reopened]
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #     branches:
+  #     - 'main'
+  #     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 jobs:
