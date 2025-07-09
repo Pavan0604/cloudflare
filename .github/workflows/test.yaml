@@ -3,14 +3,6 @@ name: Site build
 on:
   workflow_dispatch:
     inputs:
-      client:
-        description: "Client name"
-        required: false
-        type: string
-      client_url:
-        description: "Client URL"
-        required: false
-        type: string
       description:
         description: "Alert description"
         required: false
@@ -30,10 +22,7 @@ jobs:
       run: |
         echo "Event Payload:"
         echo '${{ toJson(github.event) }}'
-        echo "Client: ${{ github.event.inputs.client }}"
-        echo "Client URL: ${{ github.event.inputs.client_url }}"
-        echo "Description: ${{ github.event.inputs.description }}"
-
+        
     - name: Check Description
       id: check-description
       run: |
