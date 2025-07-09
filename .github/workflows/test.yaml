@@ -1,6 +1,5 @@
 name: Site build
 
-# workflow triggers
 on:
   workflow_dispatch:
   repository_dispatch:
@@ -13,7 +12,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2.3.1
-    
-    - name: Run echo
+
+    - name: Print Full GitHub Event
       run: |
-        echo "Hello World"
+        echo "Event Payload:"
+        echo '${{ toJson(github.event) }}'
