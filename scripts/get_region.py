@@ -7,9 +7,9 @@ region_map = {
     "US": "us-west-2",
     "SG": "ap-southeast-1",
     "SK": "ap-northeast-2",
-    "APS3": "ap-southeast-3",
-    "I1": "us-east-1",
-    "MEC1": "me-central-1"
+    "APS": "ap-southeast-3",
+    "I": "us-east-1",
+    "MEC": "me-central-1"
 }
 
 def get_region_from_description(description):
@@ -23,12 +23,12 @@ def get_region_from_description(description):
         return region_map["SG"]
     elif re.search(r"\[SK\]", description):
         return region_map["SK"]
-    elif re.search(r"\[APS3\]", description):
-        return region_map["APS3"]
-    elif re.search(r"\[I1\]", description):
-        return region_map["I1"]
-    elif re.search(r"\[MEC1\]", description):
-        return region_map["MEC1"]
+    elif re.search(r"\[APS\]", description):
+        return region_map["APS"]
+    elif re.search(r"\[I\]", description):
+        return region_map["I"]
+    elif re.search(r"\[MEC\]", description):
+        return region_map["MEC"]
     else:
         print("❌ No matching region found in description.")
         sys.exit(1)
