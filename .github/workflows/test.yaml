@@ -3,8 +3,28 @@ name: Site build
 on:
   workflow_dispatch:
     inputs:
-      title:
-        description: "Incident title"
+      payload:
+        required: false
+        type: string
+      routing_key:
+        required: false
+        type: string
+      dedup_key:
+        required: false
+        type: string
+      images:
+        required: false
+        type: string
+      links:
+        required: false
+        type: string
+      event_action:
+        required: false
+        type: string 
+      client:
+        required: false
+        type: string
+      client_url:
         required: false
         type: string
   repository_dispatch:
@@ -23,110 +43,110 @@ jobs:
         echo "Event Payload:"
         echo '${{ toJson(github.event) }}'
         
-    - name: Check Description
-      id: check-description
-      run: |
-        echo "Description: ${{ github.event.inputs.title }}"
-        if echo "${{ github.event.inputs.title }}" | grep -q "Too few LC cache Redis write operations for TARGETING"; then
-          echo "match=true" >> $GITHUB_OUTPUT
-        else
-          echo "match=false" >> $GITHUB_OUTPUT
-        fi
+    # - name: Check Description
+    #   id: check-description
+    #   run: |
+    #     echo "Description: ${{ github.event.inputs.title }}"
+    #     if echo "${{ github.event.inputs.title }}" | grep -q "Too few LC cache Redis write operations for TARGETING"; then
+    #       echo "match=true" >> $GITHUB_OUTPUT
+    #     else
+    #       echo "match=false" >> $GITHUB_OUTPUT
+    #     fi
 
-    - name: Get Region from Description
-      if: steps.check-description.outputs.match == 'true'
-      id: get-region
-      run: |
-        region=$(python scripts/get_region.py "${{ github.event.inputs.title }}")
-        echo "REGION=$region" >> $GITHUB_OUTPUT
+    # - name: Get Region from Description
+    #   if: steps.check-description.outputs.match == 'true'
+    #   id: get-region
+    #   run: |
+    #     region=$(python scripts/get_region.py "${{ github.event.inputs.title }}")
+    #     echo "REGION=$region" >> $GITHUB_OUTPUT
 
-    - name: Set Up AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v3
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ steps.get-region.outputs.REGION }}
+    # - name: Set Up AWS Credentials
+    #   uses: aws-actions/configure-aws-credentials@v3
+    #   with:
+    #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     aws-region: ${{ steps.get-region.outputs.REGION }}
 
-    - name: Get SSM Document Name
-      id: get-ssm-doc
-      run: |
-        documents=$(aws ssm list-documents --region ${{ steps.get-region.outputs.REGION  }} --filters Key=Owner,Values=Self --query "DocumentIdentifiers[*].Name" --output json)
-        document_name=$(echo "$documents" | jq -r '.[] | select(contains("ExecuteStopLcCacheWriterSsmDocument"))')  
-        echo "Using SSM Document: $document_name"
-        echo "DOC_NAME=$document_name" >> "$GITHUB_OUTPUT"
+    # - name: Get SSM Document Name
+    #   id: get-ssm-doc
+    #   run: |
+    #     documents=$(aws ssm list-documents --region ${{ steps.get-region.outputs.REGION  }} --filters Key=Owner,Values=Self --query "DocumentIdentifiers[*].Name" --output json)
+    #     document_name=$(echo "$documents" | jq -r '.[] | select(contains("ExecuteStopLcCacheWriterSsmDocument"))')  
+    #     echo "Using SSM Document: $document_name"
+    #     echo "DOC_NAME=$document_name" >> "$GITHUB_OUTPUT"
 
-    - name: Run SSM Run Command to Stop LcCacheWriter
-      id: send-command
-      run: |
-        cmd_id=$(aws ssm send-command \
-          --document-name "${{ steps.get-ssm-doc.outputs.DOC_NAME }}" \
-          --targets "Key=tag:role,Values=lc-cache-writer" \
-          --region ${{ steps.get-region.outputs.REGION }} \
-          --query 'Command.CommandId' --output text)
+    # - name: Run SSM Run Command to Stop LcCacheWriter
+    #   id: send-command
+    #   run: |
+    #     cmd_id=$(aws ssm send-command \
+    #       --document-name "${{ steps.get-ssm-doc.outputs.DOC_NAME }}" \
+    #       --targets "Key=tag:role,Values=lc-cache-writer" \
+    #       --region ${{ steps.get-region.outputs.REGION }} \
+    #       --query 'Command.CommandId' --output text)
         
-        echo "SSM Command ID: $cmd_id"
-        echo "SSM Run Command Link- https://${{ steps.get-region.outputs.REGION }}.console.aws.amazon.com/systems-manager/run-command/$cmd_id?region=${{ steps.get-region.outputs.REGION }}"
-        echo "CMD_ID=$cmd_id" >> "$GITHUB_OUTPUT"
+    #     echo "SSM Command ID: $cmd_id"
+    #     echo "SSM Run Command Link- https://${{ steps.get-region.outputs.REGION }}.console.aws.amazon.com/systems-manager/run-command/$cmd_id?region=${{ steps.get-region.outputs.REGION }}"
+    #     echo "CMD_ID=$cmd_id" >> "$GITHUB_OUTPUT"
 
-    - name: Get Instance IDs
-      id: get-instance-id
-      run: |
-        INSTANCE_IDS=$(aws ec2 describe-instances \
-          --region ${{ steps.get-region.outputs.REGION }} \
-          --filters "Name=tag:role,Values=lc-cache-writer" "Name=instance-state-name,Values=running" \
-          --query 'Reservations[*].Instances[*].InstanceId' \
-          --output text)
+    # - name: Get Instance IDs
+    #   id: get-instance-id
+    #   run: |
+    #     INSTANCE_IDS=$(aws ec2 describe-instances \
+    #       --region ${{ steps.get-region.outputs.REGION }} \
+    #       --filters "Name=tag:role,Values=lc-cache-writer" "Name=instance-state-name,Values=running" \
+    #       --query 'Reservations[*].Instances[*].InstanceId' \
+    #       --output text)
         
-        echo "Matching Instance IDs: $INSTANCE_IDS"
-        echo "INSTANCE_IDS=$INSTANCE_IDS" >> $GITHUB_OUTPUT
+    #     echo "Matching Instance IDs: $INSTANCE_IDS"
+    #     echo "INSTANCE_IDS=$INSTANCE_IDS" >> $GITHUB_OUTPUT
 
-    - name: Wait and Get Run Command Status for All Instances
-      id: check_status
-      run: |
-        CMD_ID="${{ steps.send-command.outputs.CMD_ID }}"
-        INSTANCE_IDS="${{ steps.get-instance-id.outputs.INSTANCE_IDS }}"
-        REGION="${{ steps.get-region.outputs.REGION }}"
+    # - name: Wait and Get Run Command Status for All Instances
+    #   id: check_status
+    #   run: |
+    #     CMD_ID="${{ steps.send-command.outputs.CMD_ID }}"
+    #     INSTANCE_IDS="${{ steps.get-instance-id.outputs.INSTANCE_IDS }}"
+    #     REGION="${{ steps.get-region.outputs.REGION }}"
 
-        if [[ -z "$CMD_ID" || -z "$INSTANCE_IDS" ]]; then
-          echo "❌ Missing Command ID or Instance IDs"
-          exit 1
-        fi
+    #     if [[ -z "$CMD_ID" || -z "$INSTANCE_IDS" ]]; then
+    #       echo "❌ Missing Command ID or Instance IDs"
+    #       exit 1
+    #     fi
 
-        echo "🔄 Monitoring SSM command: $CMD_ID for instances: $INSTANCE_IDS"
+    #     echo "🔄 Monitoring SSM command: $CMD_ID for instances: $INSTANCE_IDS"
         
-        for INSTANCE_ID in $INSTANCE_IDS; do
-          echo "⏳ Checking status for instance: $INSTANCE_ID"
-          while true; do
-            OUTPUT=$(aws ssm get-command-invocation \
-              --command-id "$CMD_ID" \
-              --instance-id "$INSTANCE_ID" \
-              --region "$REGION" \
-              --output json)
+    #     for INSTANCE_ID in $INSTANCE_IDS; do
+    #       echo "⏳ Checking status for instance: $INSTANCE_ID"
+    #       while true; do
+    #         OUTPUT=$(aws ssm get-command-invocation \
+    #           --command-id "$CMD_ID" \
+    #           --instance-id "$INSTANCE_ID" \
+    #           --region "$REGION" \
+    #           --output json)
 
-            STATUS=$(echo "$OUTPUT" | jq -r '.Status')
+    #         STATUS=$(echo "$OUTPUT" | jq -r '.Status')
 
-            echo "Instance $INSTANCE_ID → Status: $STATUS"
+    #         echo "Instance $INSTANCE_ID → Status: $STATUS"
 
-            if [[ "$STATUS" == "InProgress" || "$STATUS" == "Pending" ]]; then
-              echo "⏱ Still running... waiting 30 seconds..."
-              sleep 30
-            else
-              break
-            fi
-          done
+    #         if [[ "$STATUS" == "InProgress" || "$STATUS" == "Pending" ]]; then
+    #           echo "⏱ Still running... waiting 30 seconds..."
+    #           sleep 30
+    #         else
+    #           break
+    #         fi
+    #       done
 
-          echo "::group::Output for $INSTANCE_ID"
-          echo "STDOUT:"
-          echo "$(echo "$OUTPUT" | jq -r '.StandardOutputContent')"
-          echo "---"
-          echo "STDERR:"
-          echo "$(echo "$OUTPUT" | jq -r '.StandardErrorContent')"
-          echo "::endgroup::"
+    #       echo "::group::Output for $INSTANCE_ID"
+    #       echo "STDOUT:"
+    #       echo "$(echo "$OUTPUT" | jq -r '.StandardOutputContent')"
+    #       echo "---"
+    #       echo "STDERR:"
+    #       echo "$(echo "$OUTPUT" | jq -r '.StandardErrorContent')"
+    #       echo "::endgroup::"
 
-          if [[ "$STATUS" != "Success" ]]; then
-            echo "❌ Command failed on $INSTANCE_ID with status $STATUS"
-            exit 1
-          fi
-        done
+    #       if [[ "$STATUS" != "Success" ]]; then
+    #         echo "❌ Command failed on $INSTANCE_ID with status $STATUS"
+    #         exit 1
+    #       fi
+    #     done
 
-        echo "✅ SSM command succeeded on all instances."
+    #     echo "✅ SSM command succeeded on all instances."
