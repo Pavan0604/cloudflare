@@ -3,8 +3,8 @@ name: Site build
 on:
   workflow_dispatch:
     inputs:
-      description:
-        description: "Alert description"
+      title:
+        description: "Incident title"
         required: false
         type: string
   repository_dispatch:
@@ -26,8 +26,8 @@ jobs:
     - name: Check Description
       id: check-description
       run: |
-        echo "Description: ${{ github.event.inputs.description }}"
-        if echo "${{ github.event.inputs.description }}" | grep -q "Too few LC cache Redis write operations for TARGETING"; then
+        echo "Description: ${{ github.event.inputs.title }}"
+        if echo "${{ github.event.inputs.title }}" | grep -q "Too few LC cache Redis write operations for TARGETING"; then
           echo "match=true" >> $GITHUB_OUTPUT
         else
           echo "match=false" >> $GITHUB_OUTPUT
@@ -37,7 +37,7 @@ jobs:
       if: steps.check-description.outputs.match == 'true'
       id: get-region
       run: |
-        region=$(python scripts/get_region.py "${{ github.event.inputs.description }}")
+        region=$(python scripts/get_region.py "${{ github.event.inputs.title }}")
         echo "REGION=$region" >> $GITHUB_OUTPUT
 
     - name: Set Up AWS Credentials
