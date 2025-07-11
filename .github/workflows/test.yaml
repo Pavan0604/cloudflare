@@ -3,30 +3,10 @@ name: Site build
 on:
   workflow_dispatch:
     inputs:
-      payload:
-        required: false
-        type: string
-      routing_key:
-        required: false
-        type: string
-      dedup_key:
-        required: false
-        type: string
-      images:
-        required: false
-        type: string
-      links:
-        required: false
-        type: string
-      event_action:
-        required: false
-        type: string 
-      client:
-        required: false
-        type: string
-      client_url:
-        required: false
-        type: string
+      title:
+        description: 'Title of the issue'
+        required: true
+        default: 'Default Title'
   repository_dispatch:
 
 jobs:
@@ -43,22 +23,22 @@ jobs:
         echo "Event Payload:"
         echo '${{ toJson(github.event) }}'
         
-    # - name: Check Description
-    #   id: check-description
-    #   run: |
-    #     echo "Description: ${{ github.event.inputs.title }}"
-    #     if echo "${{ github.event.inputs.title }}" | grep -q "Too few LC cache Redis write operations for TARGETING"; then
-    #       echo "match=true" >> $GITHUB_OUTPUT
-    #     else
-    #       echo "match=false" >> $GITHUB_OUTPUT
-    #     fi
+    - name: Check Description
+      id: check-description
+      run: |
+        echo "Description: ${{ github.event.inputs.title }}"
+        if echo "${{ github.event.inputs.title }}" | grep -q "Too few LC cache Redis write operations for TARGETING"; then
+          echo "match=true" >> $GITHUB_OUTPUT
+        else
+          echo "match=false" >> $GITHUB_OUTPUT
+        fi
 
-    # - name: Get Region from Description
-    #   if: steps.check-description.outputs.match == 'true'
-    #   id: get-region
-    #   run: |
-    #     region=$(python scripts/get_region.py "${{ github.event.inputs.title }}")
-    #     echo "REGION=$region" >> $GITHUB_OUTPUT
+    - name: Get Region from Description
+      if: steps.check-description.outputs.match == 'true'
+      id: get-region
+      run: |
+        region=$(python scripts/get_region.py "${{ github.event.inputs.title }}")
+        echo "REGION=$region" >> $GITHUB_OUTPUT
 
     # - name: Set Up AWS Credentials
     #   uses: aws-actions/configure-aws-credentials@v3
