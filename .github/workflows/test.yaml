@@ -7,6 +7,10 @@ on:
         description: 'Title of the issue'
         required: true
         default: 'Default Title'
+      resumeUrl:
+        description: 'resumeUrl sent from n8n'
+        required: false
+        default: 'resumeUrl sent from n8n'
   repository_dispatch:
 
 jobs:
